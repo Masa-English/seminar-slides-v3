@@ -83,10 +83,10 @@
         .emphasis-band { display: inline-block; background: rgba(15, 15, 16, 0.8); padding: 0.6em 1.8em; border-radius: 8px; }
 
         /* Bullet / Pain list */
-        .bullet-list { display: flex; flex-direction: column; gap: clamp(0.6rem, 1.2vh, 1rem); max-width: 900px; margin: clamp(1.5rem, 3vh, 3rem) auto 0; text-align: left; }
-        .bullet-item { display: flex; align-items: flex-start; gap: 1rem; font-size: clamp(1rem, 1.8vw, 1.3rem); font-weight: 600; color: var(--text-primary); padding: clamp(0.8rem, 1.5vw, 1.2rem) clamp(1rem, 2vw, 1.5rem); background: var(--bg-white); border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.03); line-height: 1.6; border: none; }
-        .bullet-item::before { content: ''; flex-shrink: 0; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; margin-top: 0.55em; }
-        .bullet-item.fade-in:not([style*="opacity"]) { background: var(--bg-white); box-shadow: var(--shadow-card); border-left: 4px solid var(--accent); }
+        .bullet-list { display: flex; flex-direction: column; gap: clamp(0.3rem, 0.6vh, 0.5rem); max-width: 1100px; margin: clamp(1.5rem, 3vh, 3rem) auto 0; text-align: left; }
+        .bullet-item { display: flex; align-items: flex-start; gap: 0.8rem; font-size: clamp(0.8rem, 1.3vw, 1.05rem); font-weight: 600; color: var(--text-primary); padding: 0.6em 1em; background: var(--bg-white); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); line-height: 1.7; border: none; }
+        .bullet-item::before { content: ''; flex-shrink: 0; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; margin-top: 0.6em; }
+        .bullet-item.fade-in:not([style*="opacity"]) { background: var(--bg-white); box-shadow: var(--shadow-card); border-left: 3px solid var(--accent); }
         .pain-list { display: flex; flex-direction: column; gap: clamp(0.5rem, 1vh, 0.8rem); max-width: 600px; margin: 0 auto; }
         .pain-item { font-size: clamp(1.2rem, 2.5vw, 2rem); font-weight: 700; color: var(--text-primary); padding: 0.6em 1.2em; background: var(--bg-white); border-radius: var(--radius); border-left: 4px solid var(--accent-red); box-shadow: var(--shadow-card); }
 
