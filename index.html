@@ -8,42 +8,125 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* ========================================
+           CSS DESIGN SYSTEM v3
+           Clean School — White + Black + Orange
+           日本LP参照ベース
+           ======================================== */
 
         :root {
-            --bg-white: #ffffff; --bg-light: #f5f5f7; --bg-dark: #000000;
-            --text-primary: #1d1d1f; --text-secondary: #6e6e73; --text-tertiary: #86868b;
-            --text-white: #f5f5f7; --text-white-sub: rgba(245, 245, 247, 0.7);
-            --accent: #007aff; --accent-soft: rgba(0, 122, 255, 0.08); --accent-red: #ff3b30;
+            --accent: #e74f00;
+            --accent-soft: rgba(231, 79, 0, 0.08);
+            --accent-red: #e8453c;
+            --bg-white: #ffffff;
+            --bg-light: #f5f5f5;
+            --bg-dark: #0f0f10;
+            --text-primary: #222222;
+            --text-secondary: #555555;
+            --text-tertiary: #888888;
+            --text-white: #f5f5f5;
+            --text-white-sub: rgba(245, 245, 245, 0.7);
             --font-display: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
             --font-body: 'Inter', 'Noto Sans JP', -apple-system, sans-serif;
             --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --radius: 12px;
+            --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
         }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; scroll-snap-type: y mandatory; overflow-y: scroll; }
         body { font-family: var(--font-display); color: var(--text-primary); -webkit-font-smoothing: antialiased; }
-        .slide { width: 100vw; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; scroll-snap-align: start; position: relative; overflow: hidden; background: var(--bg-white); }
-        .slide-content { max-width: 1200px; padding: 0 clamp(2rem, 5vw, 6rem); width: 100%; }
-        .bg-light { background: var(--bg-light); }
-        .bg-dark { background: var(--bg-dark); color: var(--text-white); }
-        .slide-hero { background: var(--bg-white); position: relative; }
-        .slide-hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(ellipse at 50% 80%, var(--accent-soft) 0%, transparent 60%); }
-        .slide-hero .slide-content { position: relative; z-index: 1; }
-        .overline { font-family: var(--font-body); font-size: clamp(0.7rem, 1.1vw, 0.95rem); font-weight: 700; letter-spacing: 0.1em; color: var(--text-tertiary); margin-bottom: clamp(1rem, 2vh, 2rem); }
-        .hero-title { font-size: clamp(2.8rem, 7.5vw, 6rem); font-weight: 900; line-height: 1.08; letter-spacing: -0.025em; color: var(--text-primary); }
-        .big-title { font-size: clamp(2rem, 5vw, 4rem); font-weight: 800; line-height: 1.2; letter-spacing: -0.02em; }
-        .mid-title { font-size: clamp(1.4rem, 3.5vw, 2.6rem); font-weight: 700; line-height: 1.3; }
-        .subtitle { font-size: clamp(1rem, 2vw, 1.6rem); font-weight: 500; line-height: 1.6; color: var(--text-secondary); }
+
+        /* ===== BASE SLIDE ===== */
+        .slide {
+            width: 100vw; height: 100vh;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; scroll-snap-align: start; position: relative; overflow: hidden;
+            background: var(--bg-white);
+        }
+        .slide > * { position: relative; z-index: 1; }
+        .slide-content { max-width: 1200px; padding: 0 clamp(2rem, 5vw, 6rem); width: 100%; z-index: 1; }
+
+        /* Background variants */
+        .bg-light { background: var(--bg-light) !important; }
+        .bg-dark { background: var(--bg-dark) !important; color: var(--text-white); }
+        .bg-dark .mid-title, .bg-dark .big-title { color: var(--text-white); }
         .bg-dark .subtitle { color: var(--text-white-sub); }
-        .highlight { color: var(--accent); }
-        .highlight-red { color: var(--accent-red); }
+        .bg-dark .highlight { color: var(--accent); }
+
+        /* Hero slide */
+        .slide-hero { background: var(--bg-white); position: relative; }
+        .slide-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 80%, var(--accent-soft) 0%, transparent 60%); }
+        .slide-hero .slide-content { position: relative; z-index: 1; }
+
+        /* ===== TYPOGRAPHY ===== */
+        .hero-title { font-size: clamp(2.8rem, 7.5vw, 6rem); font-weight: 900; line-height: 1.08; letter-spacing: -0.025em; }
+        .huge-title { font-size: clamp(3rem, 8vw, 6rem); font-weight: 900; line-height: 1.1; }
+        .big-title { font-size: clamp(2.4rem, 6vw, 5rem); font-weight: 900; line-height: 1.15; letter-spacing: -0.02em; }
+        .mid-title { font-size: clamp(1.7rem, 4.5vw, 3.2rem); font-weight: 800; line-height: 1.3; }
+        .subtitle { font-size: clamp(1.2rem, 2.2vw, 1.8rem); font-weight: 600; line-height: 1.6; color: var(--text-secondary); }
+        .overline { font-family: var(--font-body); font-size: clamp(0.8rem, 1.2vw, 1rem); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: clamp(1rem, 2vh, 2rem); }
+        .highlight { color: var(--accent); font-weight: 800; }
+        .highlight-red { color: var(--accent-red); font-weight: 800; }
+
         .spacer-s { height: clamp(0.5rem, 1vh, 1rem); }
         .spacer-m { height: clamp(1rem, 2vh, 2rem); }
         .spacer-l { height: clamp(1.5rem, 3vh, 3rem); }
+
+        /* ===== COMPONENTS ===== */
         .date-badge { display: inline-block; font-family: var(--font-body); font-size: clamp(0.8rem, 1.2vw, 1rem); font-weight: 700; letter-spacing: 0.05em; padding: 0.6em 1.8em; border: 1px solid rgba(0,0,0,0.12); border-radius: 100px; color: var(--text-primary); }
-        .zoom-cta { display: inline-block; margin-top: clamp(2rem, 4vh, 4rem); font-size: clamp(0.85rem, 1.3vw, 1.1rem); font-weight: 700; color: var(--accent); padding: 0.7em 2em; background: var(--accent-soft); border-radius: 12px; }
+        .zoom-cta { display: inline-block; margin-top: clamp(2rem, 4vh, 4rem); font-size: clamp(0.85rem, 1.3vw, 1.1rem); font-weight: 700; color: var(--accent); padding: 0.7em 2em; background: var(--accent-soft); border-radius: 10px; }
+        .divider-line { width: 40px; height: 2px; background: var(--accent); margin: 0 auto clamp(1rem, 2vh, 2rem); border-radius: 2px; }
+        .accent-bar { display: block; width: 60px; height: 3px; background: var(--accent); margin: 0.8rem auto; border-radius: 2px; }
+
+        /* Emphasis band (dark overlay for text on photo slides) */
+        .emphasis-band { display: inline-block; background: rgba(15, 15, 16, 0.8); padding: 0.6em 1.8em; border-radius: 8px; }
+
+        /* Bullet / Pain list */
         .bullet-list { text-align: left; max-width: 1100px; margin: clamp(1.5rem, 3vh, 3rem) auto 0; }
         .bullet-item { font-size: clamp(0.8rem, 1.3vw, 1.05rem); font-weight: 600; color: var(--text-primary); padding: 0.45em 0; border-bottom: 1px solid rgba(0,0,0,0.06); line-height: 1.7; }
-        .divider-line { width: 40px; height: 2px; background: var(--accent); margin: 0 auto clamp(1.5rem, 3vh, 3rem); }
+        .pain-list { display: flex; flex-direction: column; gap: clamp(0.5rem, 1vh, 0.8rem); max-width: 600px; margin: 0 auto; }
+        .pain-item { font-size: clamp(1.2rem, 2.5vw, 2rem); font-weight: 700; color: var(--text-primary); padding: 0.6em 1.2em; background: var(--bg-white); border-radius: var(--radius); border-left: 4px solid var(--accent-red); box-shadow: var(--shadow-card); }
+
+        /* Illustration */
+        .slide-illust { position: absolute; bottom: clamp(6rem, 15vh, 14rem); max-height: clamp(200px, 35vh, 400px); opacity: 0.9; z-index: 2; pointer-events: none; filter: drop-shadow(0 8px 24px rgba(0,0,0,0.12)); }
+        .slide-illust.pos-right { right: clamp(3rem, 6vw, 10rem); }
+        .slide-illust.pos-left { left: clamp(3rem, 6vw, 10rem); }
+        .slide-illust.pos-center { left: 50%; transform: translateX(-50%); }
+
+        /* Stats */
+        .stat-value { font-size: clamp(1.4rem, 3vw, 2.2rem); font-weight: 800; color: var(--accent); }
+        .stats-row { display: flex; justify-content: center; gap: clamp(1rem, 2vw, 2rem); flex-wrap: wrap; margin-top: clamp(1rem, 2vh, 2rem); }
+        .stat-item { text-align: center; }
+        .stat-label { font-size: clamp(0.7rem, 1vw, 0.85rem); font-weight: 600; color: var(--text-tertiary); margin-top: 0.3rem; }
+
+        /* Flow cards */
+        .flow-card { flex: 1; max-width: 280px; background: var(--bg-white); border-radius: var(--radius); padding: clamp(1.2rem, 2vw, 2rem); text-align: left; box-shadow: var(--shadow-card); border-top: 3px solid var(--accent); }
+        .flow-part { font-family: var(--font-body); font-size: clamp(0.7rem, 1vw, 0.85rem); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+
+        /* Testimonial */
+        .testimonial-solo { max-width: 500px; margin: 0 auto; background: var(--bg-white); border-radius: var(--radius); padding: clamp(1.5rem, 2.5vw, 2.5rem); text-align: left; box-shadow: var(--shadow-card); border-top: 3px solid var(--accent); }
+        .testimonial-ba strong { color: var(--accent-red); font-weight: 700; }
+
+        /* Profile image */
+        .profile-img { width: clamp(90px, 12vw, 130px); height: clamp(90px, 12vw, 130px); border-radius: 50%; object-fit: cover; margin: 0 auto clamp(1rem, 1.5vh, 1.5rem); display: block; box-shadow: 0 0 0 3px var(--accent), 0 4px 16px rgba(0,0,0,0.12); }
+
+        /* Career list */
+        .lisa-career-list { list-style: none; padding: 0; border-left: 3px solid var(--accent); padding-left: clamp(0.75rem, 1.5vw, 1.2rem); }
+
+        /* Results image */
+        .results-img { width: 100%; max-width: 900px; border-radius: var(--radius); margin: 0 auto; display: block; box-shadow: 0 4px 24px rgba(0,0,0,0.12); }
+
+        /* Resume banner */
+        .resume-banner, .resume-yes, .resume-no { z-index: 80; }
+
+        /* ===== NAV ===== */
+        .nav-dots { position: fixed; right: clamp(1rem, 2vw, 2.5rem); top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 6px; z-index: 100; }
+        .nav-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(150,150,150,0.2); border: none; cursor: pointer; transition: all 0.3s ease; padding: 0; }
+        .nav-dot.active { background: var(--accent); transform: scale(1.4); }
+        .slide-counter { position: fixed; bottom: clamp(1.5rem, 2vh, 2rem); right: clamp(1.5rem, 3vw, 3rem); font-family: var(--font-body); font-size: 0.75rem; color: rgba(100,100,100,0.25); z-index: 100; }
+
+        /* ===== ANIMATIONS ===== */
         .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo); }
         .fade-in.visible { opacity: 1; transform: translateY(0); }
         .fade-in-delay-1 { transition-delay: 0.15s; }
@@ -55,184 +138,6 @@
         .entry-2 { animation: fadeUp 0.9s var(--ease-out-expo) 0.5s forwards; }
         .entry-3 { animation: fadeUp 0.8s var(--ease-out-expo) 0.8s forwards; }
         .entry-4 { animation: fadeUp 0.8s var(--ease-out-expo) 1.1s forwards; }
-        .nav-dots { position: fixed; right: clamp(1rem, 2vw, 2.5rem); top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 6px; z-index: 100; }
-        .nav-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(150,150,150,0.25); border: none; cursor: pointer; transition: all 0.3s ease; padding: 0; }
-        .nav-dot.active { background: var(--text-primary); transform: scale(1.4); }
-        .slide-counter { position: fixed; bottom: clamp(1.5rem, 2vh, 2rem); right: clamp(1.5rem, 3vw, 3rem); font-family: var(--font-body); font-size: 0.75rem; color: rgba(100,100,100,0.3); z-index: 100; }
-    
-
-
-        
-        /* === SEMINAR DESIGN SYSTEM === */
-        :root {
-            /* Navy-Gold palette */
-            --navy: #1a1f3a;
-            --navy-mid: #252b4a;
-            --navy-light: #2d345a;
-            --gold: #d4a843;
-            --gold-bright: #e8c84a;
-            --accent: #d4a843;
-            --accent-soft: rgba(212, 168, 67, 0.12);
-            --accent-red: #e8453c;
-            --bg-white: #ffffff;
-            --bg-light: #eef0f4;
-            --bg-dark: #1a1f3a;
-            --text-primary: #1a1f3a;
-            --text-secondary: #4a4f6a;
-            --text-tertiary: #7a7f9a;
-            --text-white: #f0f0f5;
-            --text-white-sub: rgba(240, 240, 245, 0.75);
-            --font-display: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
-            --font-body: 'Inter', 'Noto Sans JP', -apple-system, sans-serif;
-            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        /* Geometric pattern background (light slides) */
-        .slide {
-            width: 100vw; height: 100vh;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center; scroll-snap-align: start; position: relative; overflow: hidden;
-            background: var(--bg-light);
-        }
-        .slide::before {
-            content: '';
-            position: absolute; inset: 0;
-            background:
-                linear-gradient(135deg, rgba(26,31,58,0.03) 25%, transparent 25%),
-                linear-gradient(225deg, rgba(26,31,58,0.03) 25%, transparent 25%),
-                linear-gradient(315deg, rgba(26,31,58,0.03) 25%, transparent 25%),
-                linear-gradient(45deg, rgba(26,31,58,0.03) 25%, transparent 25%);
-            background-size: 120px 120px;
-            background-position: 0 0, 60px 0, 60px -60px, 0 60px;
-            pointer-events: none;
-            z-index: 0;
-        }
-        .slide > * { position: relative; z-index: 1; }
-
-        /* Navy background slides */
-        .bg-navy {
-            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 50%, var(--navy-light) 100%) !important;
-            color: var(--text-white);
-        }
-        .bg-navy::before {
-            background:
-                linear-gradient(135deg, rgba(255,255,255,0.04) 25%, transparent 25%),
-                linear-gradient(225deg, rgba(255,255,255,0.04) 25%, transparent 25%),
-                linear-gradient(315deg, rgba(255,255,255,0.04) 25%, transparent 25%),
-                linear-gradient(45deg, rgba(255,255,255,0.04) 25%, transparent 25%) !important;
-            background-size: 100px 100px !important;
-            background-position: 0 0, 50px 0, 50px -50px, 0 50px !important;
-        }
-        .bg-navy .mid-title, .bg-navy .big-title { color: var(--gold-bright); }
-        .bg-navy .subtitle { color: var(--text-white-sub); }
-        .bg-navy .highlight { color: var(--gold-bright); }
-        .bg-navy .highlight-red { color: #ff6b6b; }
-
-        /* Dark overlay slides (photo backgrounds) */
-        .bg-dark {
-            background: var(--bg-dark); color: var(--text-white);
-        }
-        .bg-dark::before { display: none; }
-        .bg-dark .mid-title, .bg-dark .big-title { color: var(--text-white); }
-        .bg-dark .subtitle { color: var(--text-white-sub); }
-        .bg-dark .highlight { color: var(--gold-bright); }
-
-        /* Light background refinement */
-        .bg-light {
-            background: var(--bg-light) !important;
-        }
-
-        /* Navy top+bottom bars for light slides (like Marina) */
-        .slide::after {
-            content: '';
-            position: absolute; top: 0; left: 0; right: 0;
-            height: clamp(40px, 5vh, 60px);
-            background: linear-gradient(135deg, var(--navy), var(--navy-mid));
-            z-index: 0;
-            pointer-events: none;
-        }
-        .bg-navy::after, .bg-dark::after { display: none; }
-
-        .slide-content { max-width: 1200px; padding: 0 clamp(2rem, 5vw, 6rem); width: 100%; z-index: 1; }
-
-        /* Typography - bolder */
-        .big-title { font-size: clamp(2.4rem, 6vw, 5rem); font-weight: 900; line-height: 1.15; letter-spacing: -0.02em; color: var(--text-primary); }
-        .mid-title { font-size: clamp(1.7rem, 4.5vw, 3.2rem); font-weight: 800; line-height: 1.3; color: var(--text-primary); }
-        .subtitle { font-size: clamp(1.2rem, 2.2vw, 1.8rem); font-weight: 600; line-height: 1.6; color: var(--text-secondary); }
-
-        /* Gold highlight instead of blue */
-        .highlight { color: var(--gold); font-weight: 800; }
-        .highlight-red { color: var(--accent-red); font-weight: 800; }
-
-        /* Gold underline accent bar */
-        .gold-bar { display: block; width: 80px; height: 4px; background: var(--gold); margin: 0.8rem auto; border-radius: 2px; }
-
-        /* Illustration styles - larger */
-        .slide-illust {
-            position: absolute;
-            bottom: clamp(6rem, 15vh, 14rem);
-            max-height: clamp(200px, 35vh, 400px);
-            opacity: 0.9;
-            z-index: 2;
-            pointer-events: none;
-            filter: drop-shadow(0 4px 16px rgba(0,0,0,0.1));
-        }
-        .slide-illust.pos-right { right: clamp(3rem, 6vw, 10rem); }
-        .slide-illust.pos-left { left: clamp(3rem, 6vw, 10rem); }
-        .slide-illust.pos-center { left: 50%; transform: translateX(-50%); }
-
-        /* Overline badge */
-        .overline {
-            font-family: var(--font-body); font-size: clamp(0.8rem, 1.2vw, 1rem);
-            font-weight: 700; letter-spacing: 0.1em; color: var(--gold);
-            margin-bottom: clamp(1rem, 2vh, 2rem);
-        }
-
-        /* Stats */
-        .stat-value { font-size: clamp(1.4rem, 3vw, 2.2rem); font-weight: 800; color: var(--gold); }
-
-        /* Flow cards */
-        .flow-card { flex: 1; max-width: 280px; background: rgba(255,255,255,0.9); border-radius: 16px; padding: clamp(1.2rem, 2vw, 2rem); text-align: left; border: 1px solid rgba(26,31,58,0.08); }
-        .flow-part { font-family: var(--font-body); font-size: clamp(0.7rem, 1vw, 0.85rem); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; }
-
-        /* Testimonial */
-        .testimonial-solo { max-width: 500px; margin: 0 auto; background: rgba(255,255,255,0.9); border-radius: 16px; padding: clamp(1.5rem, 2.5vw, 2.5rem); text-align: left; border: 1px solid rgba(26,31,58,0.06); }
-        .testimonial-ba strong { color: var(--accent-red); font-weight: 700; }
-
-        /* Divider */
-        .divider-line { width: 60px; height: 3px; background: var(--gold); margin: 0 auto clamp(1rem, 2vh, 2rem); border-radius: 2px; }
-
-        /* Profile image with gold ring */
-        .profile-img { width: clamp(90px, 12vw, 130px); height: clamp(90px, 12vw, 130px); border-radius: 50%; object-fit: cover; margin: 0 auto clamp(1rem, 1.5vh, 1.5rem); display: block; box-shadow: 0 0 0 3px var(--gold), 0 4px 16px rgba(0,0,0,0.12); }
-
-        /* Nav dots */
-        .nav-dots { position: fixed; right: clamp(1rem, 2vw, 2.5rem); top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 6px; z-index: 100; }
-        .nav-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(150,150,150,0.25); border: none; cursor: pointer; transition: all 0.3s ease; padding: 0; }
-        .nav-dot.active { background: var(--gold); transform: scale(1.4); }
-        .slide-counter { position: fixed; bottom: clamp(1.5rem, 2vh, 2rem); right: clamp(1.5rem, 3vw, 3rem); font-family: var(--font-body); font-size: 0.75rem; color: rgba(100,100,100,0.3); z-index: 100; }
-
-        /* Pain list */
-        .pain-list { display: flex; flex-direction: column; gap: clamp(0.5rem, 1vh, 0.8rem); max-width: 600px; margin: 0 auto; }
-        .pain-item { font-size: clamp(1.2rem, 2.5vw, 2rem); font-weight: 700; color: var(--text-primary); padding: 0.6em 1.2em; background: rgba(255,255,255,0.8); border-radius: 12px; border-left: 4px solid var(--accent-red); }
-
-        /* Resume banner */
-        .resume-banner, .resume-yes, .resume-no { z-index: 80; }
-
-        /* Animations */
-        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo); }
-        .fade-in.visible { opacity: 1; transform: translateY(0); }
-        .fade-in-delay-1 { transition-delay: 0.15s; }
-        .fade-in-delay-2 { transition-delay: 0.3s; }
-        .fade-in-delay-3 { transition-delay: 0.45s; }
-
-        /* Career list with gold accent */
-        .lisa-career-list { list-style: none; padding: 0; border-left: 3px solid var(--gold); padding-left: clamp(0.75rem, 1.5vw, 1.2rem); }
-
-        /* Results image */
-        .results-img { width: 100%; max-width: 900px; border-radius: 16px; margin: 0 auto; display: block; box-shadow: 0 4px 24px rgba(0,0,0,0.12); }
-
-
-        .huge-title { font-size: clamp(3rem, 8vw, 6rem); font-weight: 900; line-height: 1.1; }
 
     </style>
 </head>
@@ -537,10 +442,10 @@
 
 <section class="slide" data-slide-index="27" style="background: url('assets/marina/bg-present.png') center/cover no-repeat;">
         <div class="slide-content" style="position: relative; z-index: 1;">
-            <p class="fade-in" style="font-size: clamp(0.8rem, 1.2vw, 1rem); font-weight: 600; letter-spacing: 0.05em; color: var(--text-secondary); border-bottom: 2px solid #2A274E; display: inline-block; padding-bottom: 0.3em; margin-bottom: clamp(1rem, 2vh, 2rem);">セミナー参加特典のご案内</p>
+            <p class="fade-in" style="font-size: clamp(0.8rem, 1.2vw, 1rem); font-weight: 600; letter-spacing: 0.05em; color: var(--text-secondary); border-bottom: 2px solid var(--accent); display: inline-block; padding-bottom: 0.3em; margin-bottom: clamp(1rem, 2vh, 2rem);">セミナー参加特典のご案内</p>
             <h2 class="big-title fade-in fade-in-delay-1" style="color: #1d1d1f; line-height: 1.3;">中学英語すら怪しくても<br>英語が話せるようになる</h2>
             <div class="spacer-s"></div>
-            <div style="background: #ff3b30; padding: 0.4em 1.5em; border-radius: 6px; display: inline-block;">
+            <div style="background: var(--accent-red); padding: 0.4em 1.5em; border-radius: 6px; display: inline-block;">
                 <h2 class="mid-title fade-in fade-in-delay-2" style="color: #fff; font-weight: 800;">完全ロードマップ解説動画</h2>
             </div>
             <div class="spacer-m"></div>
@@ -620,11 +525,11 @@
         <div class="slide-content">
             <h2 class="mid-title fade-in" style="color: var(--text-white);">今でこそ話せる僕らも...</h2>
             <div class="spacer-m"></div>
-            <div style="background: rgba(42,39,78,0.85); padding: 0.8em 2em; border-radius: 8px; display: inline-block;">
+            <div style="background: rgba(15,15,16,0.8); padding: 0.6em 1.8em; border-radius: 8px; display: inline-block;">
                 <h2 class="mid-title fade-in fade-in-delay-1" style="color: var(--text-white);">「Hi, how are you」に対して...</h2>
             </div>
             <div class="spacer-m"></div>
-            <h2 class="mid-title fade-in fade-in-delay-2" style="color: #ff3b30; font-weight: 800;">何も、言えなかったんです...</h2>
+            <h2 class="mid-title fade-in fade-in-delay-2" style="color: var(--accent-red); font-weight: 800;">何も、言えなかったんです...</h2>
         </div>
     </section>
 
@@ -632,18 +537,18 @@
         <div class="slide-content">
             <h2 class="mid-title fade-in" style="color: var(--text-white);">頭が真っ白... 心臓がバクバクして...</h2>
             <div class="spacer-m"></div>
-            <div style="background: rgba(42,39,78,0.85); padding: 0.8em 2em; border-radius: 8px; display: inline-block;">
+            <div style="background: rgba(15,15,16,0.8); padding: 0.6em 1.8em; border-radius: 8px; display: inline-block;">
                 <p class="mid-title fade-in fade-in-delay-1" style="color: var(--text-white);">気がついたら、開始たった10秒で<br>通話ボタンを切って逃げ出していました</p>
             </div>
             <div class="spacer-m"></div>
-            <h2 class="mid-title fade-in fade-in-delay-2" style="color: #EBCC58; font-weight: 800;">情けなくて、悔しくて、部屋で一人泣きました</h2>
+            <h2 class="mid-title fade-in fade-in-delay-2" style="color: var(--accent); font-weight: 800;">情けなくて、悔しくて、部屋で一人泣きました</h2>
         </div>
     </section>
 
 <section class="slide" data-slide-index="36" style="background: linear-gradient(rgba(60,60,60,0.7), rgba(60,60,60,0.7)), url('assets/marina/photo_boss_scolding_bg.jpg') center top/cover no-repeat;">
         <div class="slide-content">
-            <div style="background: rgba(42,39,78,0.85); padding: 0.8em 2em; border-radius: 8px; display: inline-block;">
-                <h2 class="mid-title fade-in" style="color: var(--text-white);">「俺には、英語の才能なんて<span style="color: #EBCC58;">1ミリもないんだ</span>」</h2>
+            <div style="background: rgba(15,15,16,0.8); padding: 0.6em 1.8em; border-radius: 8px; display: inline-block;">
+                <h2 class="mid-title fade-in" style="color: var(--text-white);">「俺には、英語の才能なんて<span style="color: var(--accent);">1ミリもないんだ</span>」</h2>
             </div>
             <div class="spacer-l"></div>
             <h2 class="mid-title fade-in fade-in-delay-1" style="color: var(--text-white);">そこから1ヶ月間、<br>英語を見るのも嫌になって<br>英語は諦めたんです...</h2>
@@ -1747,10 +1652,10 @@
 
 <section class="slide" data-slide-index="153" style="background: url('assets/marina/bg-present.png') center/cover no-repeat;">
         <div class="slide-content" style="position: relative; z-index: 1;">
-            <p class="fade-in" style="font-size: clamp(0.8rem, 1.2vw, 1rem); font-weight: 600; letter-spacing: 0.05em; color: var(--text-secondary); border-bottom: 2px solid #2A274E; display: inline-block; padding-bottom: 0.3em; margin-bottom: clamp(1rem, 2vh, 2rem);">セミナー参加特典のご案内</p>
+            <p class="fade-in" style="font-size: clamp(0.8rem, 1.2vw, 1rem); font-weight: 600; letter-spacing: 0.05em; color: var(--text-secondary); border-bottom: 2px solid var(--accent); display: inline-block; padding-bottom: 0.3em; margin-bottom: clamp(1rem, 2vh, 2rem);">セミナー参加特典のご案内</p>
             <h2 class="big-title fade-in fade-in-delay-1" style="color: #1d1d1f; line-height: 1.3;">中学英語すら怪しくても<br>英語が話せるようになる</h2>
             <div class="spacer-s"></div>
-            <div style="background: #ff3b30; padding: 0.4em 1.5em; border-radius: 6px; display: inline-block;">
+            <div style="background: var(--accent-red); padding: 0.4em 1.5em; border-radius: 6px; display: inline-block;">
                 <h2 class="mid-title fade-in fade-in-delay-2" style="color: #fff; font-weight: 800;">完全ロードマップ解説動画</h2>
             </div>
             <div class="spacer-m"></div>
@@ -1866,7 +1771,7 @@
                             const isActive = i === idx;
                             d.classList.toggle('active', isActive);
                             const isDark = entry.target.classList.contains('bg-dark');
-                            d.style.background = isActive ? (isDark ? '#f5f5f7' : '#1d1d1f') : 'rgba(150,150,150,0.25)';
+                            d.style.background = isActive ? '#e74f00' : 'rgba(150,150,150,0.2)';
                             d.style.transform = isActive ? 'scale(1.4)' : 'scale(1)';
                         });
                         const isDark = entry.target.classList.contains('bg-dark');
