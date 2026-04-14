@@ -93,10 +93,10 @@
         .pain-item { font-size: clamp(1.2rem, 2.5vw, 2rem); font-weight: 700; color: var(--text-primary); padding: 0.6em 1.2em; background: var(--bg-white); border-radius: var(--radius); border-left: 4px solid var(--accent-red); box-shadow: var(--shadow-card); }
 
         /* Illustration */
-        .slide-illust { position: absolute; bottom: clamp(4rem, 10vh, 10rem); max-height: clamp(160px, 25vh, 280px); opacity: 0.8; z-index: 0; pointer-events: none; filter: drop-shadow(0 8px 24px rgba(0,0,0,0.12)); }
-        .slide-illust.pos-right { right: clamp(5rem, 10vw, 14rem); }
-        .slide-illust.pos-left { left: clamp(3rem, 6vw, 10rem); }
-        .slide-illust.pos-center { left: 50%; transform: translateX(-50%); }
+        .slide-illust { position: absolute; bottom: clamp(2rem, 5vh, 5rem); max-height: clamp(80px, 15vh, 180px); max-width: 20vw; opacity: 0.7; z-index: 0; pointer-events: none; filter: drop-shadow(0 8px 24px rgba(0,0,0,0.12)); }
+        .slide-illust.pos-right { right: clamp(2rem, 4vw, 6rem); }
+        .slide-illust.pos-left { left: clamp(2rem, 4vw, 6rem); }
+        .slide-illust.pos-center { left: 50%; transform: translateX(-50%); max-width: 18vw; }
 
         /* Stats */
         .stat-value { font-size: clamp(1.4rem, 3vw, 2.2rem); font-weight: 800; color: var(--accent); }
@@ -1099,7 +1099,7 @@
         <div class="slide-content">
             <h2 class="mid-title fade-in">リスニングの壁は耳の問題ではなく、<br><span class="highlight">発音で解決できます</span></h2>
             <div class="spacer-m"></div>
-            <h2 class="big-title fade-in fade-in-delay-1">では次に、<br>聞けるようになると<br>なぜ<span class="highlight">話せるように<br>なるのか</span>、<br>Part3で<br>見ていきましょう</h2>
+            <h2 class="mid-title fade-in fade-in-delay-1" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem);">では次に、聞けるようになると<br>なぜ<span class="highlight">話せるようになるのか</span>、<br>Part3で見ていきましょう</h2>
             <div class="divider-line fade-in fade-in-delay-2" style="margin-top: clamp(1.5rem, 3vh, 3rem);"></div>
             <div class="flow-container">
                 <div class="flow-card done fade-in fade-in-delay-1">
@@ -1520,7 +1520,7 @@
             <p class="subtitle fade-in fade-in-delay-2">サボっても誰も引き上げてくれない</p>
             <p class="subtitle fade-in fade-in-delay-3">「今日は疲れたからいいや」</p>
         </div>
-            <img src="assets/marina/s12_6.png" class="slide-illust pos-right fade-in" alt="">
+            <img src="assets/marina/s12_6.png" class="slide-illust pos-right fade-in" style="border-radius: 50%; object-fit: cover;" alt="">
     </section>
 
 <section class="slide" data-slide-index="138">
