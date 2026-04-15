@@ -1822,27 +1822,50 @@
 
         // ========== EDIT MODE (press E to toggle) ==========
         let editMode = false;
+        let selectedEl = null;
+
+        // Banner
         const editBanner = document.createElement('div');
-        editBanner.id = 'editBanner';
-        editBanner.innerHTML = '✏️ 編集モード ON — 要素をドラッグで移動 / Eキーで終了';
+        editBanner.innerHTML = '✏️ 編集モード — ドラッグ:移動 / ホイール:拡大縮小 / Eキー:終了';
         editBanner.style.cssText = 'display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#e74f00;color:#fff;text-align:center;padding:8px;font-size:14px;font-weight:700;';
         document.body.appendChild(editBanner);
+
+        // Center guidelines
+        const guideH = document.createElement('div');
+        guideH.style.cssText = 'display:none;position:fixed;top:50%;left:0;right:0;height:1px;background:#e74f00;z-index:9998;pointer-events:none;opacity:0.5;';
+        const guideV = document.createElement('div');
+        guideV.style.cssText = 'display:none;position:fixed;top:0;bottom:0;left:50%;width:1px;background:#e74f00;z-index:9998;pointer-events:none;opacity:0.5;';
+        document.body.appendChild(guideH);
+        document.body.appendChild(guideV);
 
         function toggleEditMode() {
             editMode = !editMode;
             editBanner.style.display = editMode ? 'block' : 'none';
-            document.body.style.cursor = editMode ? 'move' : '';
+            guideH.style.display = editMode ? 'block' : 'none';
+            guideV.style.display = editMode ? 'block' : 'none';
+            document.body.style.cursor = editMode ? 'crosshair' : '';
+            if (selectedEl) { selectedEl.style.outline = ''; selectedEl = null; }
             if (!editMode) savePositions();
         }
 
+        const EDIT_TARGETS = 'h2, p, img, .slide-illust, .bullet-item, .flow-card, .step-box, .testimonial-solo, .zoom-cta, .example-box, .phase-card-img, .emphasis-band, .pain-item, .divider-line, .accent-bar, .date-badge';
+
         let dragEl = null, dragStartX, dragStartY, elStartX, elStartY;
+        const SNAP_THRESHOLD = 8;
 
         document.addEventListener('mousedown', e => {
             if (!editMode) return;
-            const target = e.target.closest('h2, p, img, div.spacer-s, div.spacer-m, div.spacer-l, .slide-illust, .bullet-item, .flow-card, .step-box, .testimonial-solo, .zoom-cta, .example-box, .phase-card-img, .emphasis-band, .pain-item');
+            const target = e.target.closest(EDIT_TARGETS);
             if (!target) return;
             e.preventDefault();
             e.stopPropagation();
+
+            // Select
+            if (selectedEl) selectedEl.style.outline = '';
+            selectedEl = target;
+            selectedEl.style.outline = '2px dashed #e74f00';
+
+            // Start drag
             dragEl = target;
             if (!dragEl.style.position || dragEl.style.position === 'static') {
                 dragEl.style.position = 'relative';
@@ -1851,44 +1874,91 @@
             dragStartY = e.clientY;
             elStartX = parseFloat(dragEl.style.left) || 0;
             elStartY = parseFloat(dragEl.style.top) || 0;
-            dragEl.style.outline = '2px dashed #e74f00';
             dragEl.style.zIndex = '100';
         });
 
         document.addEventListener('mousemove', e => {
             if (!dragEl) return;
-            const dx = e.clientX - dragStartX;
-            const dy = e.clientY - dragStartY;
-            dragEl.style.left = (elStartX + dx) + 'px';
-            dragEl.style.top = (elStartY + dy) + 'px';
+            let dx = e.clientX - dragStartX;
+            let dy = e.clientY - dragStartY;
+            let newLeft = elStartX + dx;
+            let newTop = elStartY + dy;
+
+            // Snap to center
+            const rect = dragEl.getBoundingClientRect();
+            const elCenterX = rect.left + rect.width / 2;
+            const elCenterY = rect.top + rect.height / 2;
+            const vpCenterX = window.innerWidth / 2;
+            const vpCenterY = window.innerHeight / 2;
+
+            // Horizontal center snap
+            if (Math.abs(elCenterX - vpCenterX) < SNAP_THRESHOLD) {
+                newLeft += (vpCenterX - elCenterX);
+                guideV.style.opacity = '1';
+                guideV.style.background = '#e74f00';
+            } else {
+                guideV.style.opacity = '0.3';
+                guideV.style.background = '#ccc';
+            }
+
+            // Vertical center snap
+            if (Math.abs(elCenterY - vpCenterY) < SNAP_THRESHOLD) {
+                newTop += (vpCenterY - elCenterY);
+                guideH.style.opacity = '1';
+                guideH.style.background = '#e74f00';
+            } else {
+                guideH.style.opacity = '0.3';
+                guideH.style.background = '#ccc';
+            }
+
+            dragEl.style.left = newLeft + 'px';
+            dragEl.style.top = newTop + 'px';
         });
 
         document.addEventListener('mouseup', () => {
             if (dragEl) {
-                dragEl.style.outline = '';
                 dragEl.style.zIndex = '';
                 dragEl = null;
+                guideH.style.opacity = '0.3';
+                guideH.style.background = '#ccc';
+                guideV.style.opacity = '0.3';
+                guideV.style.background = '#ccc';
             }
         });
+
+        // Resize with mouse wheel
+        document.addEventListener('wheel', e => {
+            if (!editMode || !selectedEl) return;
+            e.preventDefault();
+            const scale = e.deltaY < 0 ? 1.05 : 0.95;
+            const current = parseFloat(selectedEl.style.transform?.match(/scale\(([^)]+)\)/)?.[1] || 1);
+            const newScale = Math.max(0.3, Math.min(3, current * scale));
+            selectedEl.style.transform = `scale(${newScale.toFixed(3)})`;
+        }, { passive: false });
 
         function savePositions() {
             const data = {};
             slides.forEach((slide, si) => {
-                const moved = slide.querySelectorAll('[style*="top:"], [style*="left:"]');
-                if (moved.length === 0) return;
-                data[si] = [];
-                moved.forEach((el, ei) => {
-                    data[si].push({
+                const moved = slide.querySelectorAll('[style]');
+                const items = [];
+                moved.forEach(el => {
+                    const hasPos = el.style.top || el.style.left;
+                    const hasScale = el.style.transform?.includes('scale');
+                    if (!hasPos && !hasScale) return;
+                    items.push({
                         idx: Array.from(el.parentElement.children).indexOf(el),
                         tag: el.tagName,
-                        top: el.style.top,
-                        left: el.style.left
+                        cls: el.className.split(' ')[0],
+                        top: el.style.top || '',
+                        left: el.style.left || '',
+                        transform: el.style.transform || ''
                     });
                 });
+                if (items.length > 0) data[si] = items;
             });
             if (Object.keys(data).length > 0) {
                 localStorage.setItem('slide-positions', JSON.stringify(data));
-                console.log('Positions saved to localStorage', data);
+                console.log('Positions saved', data);
             }
         }
 
@@ -1900,14 +1970,14 @@
                 const slide = slides[parseInt(si)];
                 if (!slide) return;
                 items.forEach(item => {
-                    const children = slide.querySelectorAll(item.tag);
-                    const el = Array.from(slide.querySelectorAll('*')).find((e, i) => {
-                        return Array.from(e.parentElement.children).indexOf(e) === item.idx && e.tagName === item.tag;
-                    });
+                    const el = Array.from(slide.querySelectorAll('*')).find(e =>
+                        Array.from(e.parentElement.children).indexOf(e) === item.idx && e.tagName === item.tag
+                    );
                     if (el) {
-                        el.style.position = 'relative';
-                        el.style.top = item.top;
-                        el.style.left = item.left;
+                        if (item.top || item.left) el.style.position = 'relative';
+                        if (item.top) el.style.top = item.top;
+                        if (item.left) el.style.left = item.left;
+                        if (item.transform) el.style.transform = item.transform;
                     }
                 });
             });
@@ -1918,6 +1988,13 @@
             if (e.key === 'e' || e.key === 'E') {
                 if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
                 toggleEditMode();
+            }
+            // Delete position reset
+            if (editMode && selectedEl && (e.key === 'Delete' || e.key === 'Backspace')) {
+                selectedEl.style.top = '';
+                selectedEl.style.left = '';
+                selectedEl.style.transform = '';
+                selectedEl.style.position = '';
             }
         });
     </script>
