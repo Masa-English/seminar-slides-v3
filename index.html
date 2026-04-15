@@ -1936,15 +1936,48 @@
             }
         });
 
-        // Resize with mouse wheel
-        document.addEventListener('wheel', e => {
-            if (!editMode || !selectedEl) return;
+        // Resize handles (Canva-style corner drag)
+        const resizeHandle = document.createElement('div');
+        resizeHandle.style.cssText = 'display:none;position:fixed;width:12px;height:12px;background:#e74f00;border:2px solid #fff;border-radius:2px;cursor:nwse-resize;z-index:10000;box-shadow:0 1px 3px rgba(0,0,0,0.3);';
+        document.body.appendChild(resizeHandle);
+
+        let resizing = false, resizeStartX, resizeStartY, resizeStartScale;
+
+        function updateHandlePosition() {
+            if (!selectedEl || !editMode) { resizeHandle.style.display = 'none'; return; }
+            const rect = selectedEl.getBoundingClientRect();
+            resizeHandle.style.display = 'block';
+            resizeHandle.style.left = (rect.right - 6) + 'px';
+            resizeHandle.style.top = (rect.bottom - 6) + 'px';
+        }
+
+        const origSelectEl = Object.getOwnPropertyDescriptor(window, 'selectedEl');
+        // Update handle when selection changes - use MutationObserver approach
+        setInterval(() => { if (editMode && selectedEl) updateHandlePosition(); }, 50);
+
+        resizeHandle.addEventListener('mousedown', e => {
+            if (!selectedEl) return;
             e.preventDefault();
-            const scale = e.deltaY < 0 ? 1.05 : 0.95;
-            const current = parseFloat(selectedEl.style.transform?.match(/scale\(([^)]+)\)/)?.[1] || 1);
-            const newScale = Math.max(0.3, Math.min(3, current * scale));
+            e.stopPropagation();
+            resizing = true;
+            resizeStartX = e.clientX;
+            resizeStartY = e.clientY;
+            resizeStartScale = parseFloat(selectedEl.style.transform?.match(/scale\(([^)]+)\)/)?.[1] || 1);
+        });
+
+        document.addEventListener('mousemove', e => {
+            if (!resizing) return;
+            const dx = e.clientX - resizeStartX;
+            const dy = e.clientY - resizeStartY;
+            const delta = (dx + dy) / 2;
+            const newScale = Math.max(0.2, Math.min(4, resizeStartScale + delta / 150));
             selectedEl.style.transform = `scale(${newScale.toFixed(3)})`;
-        }, { passive: false });
+            updateHandlePosition();
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (resizing) resizing = false;
+        });
 
         function savePositions() {
             const data = {};
