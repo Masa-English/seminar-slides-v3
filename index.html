@@ -1848,81 +1848,94 @@
             if (!editMode) savePositions();
         }
 
-        const EDIT_TARGETS = 'h2, p, img, .slide-illust, .bullet-item, .flow-card, .step-box, .testimonial-solo, .zoom-cta, .example-box, .phase-card-img, .emphasis-band, .pain-item, .divider-line, .accent-bar, .date-badge';
+        const EDIT_TARGETS = 'h2, p, img, .slide-illust, .bullet-item, .flow-card, .step-box, .testimonial-solo, .zoom-cta, .example-box, .phase-card-img, .emphasis-band, .pain-item, .divider-line, .accent-bar, .date-badge, .slide-content';
 
-        let dragEl = null, dragStartX, dragStartY, elStartX, elStartY;
-        const SNAP_THRESHOLD = 8;
+        let dragEl = null, dragStartX, dragStartY, elStartLeft, elStartTop;
+        const SNAP_DIST = 12;
+        const SNAP_RELEASE = 20;
+        let snappedX = false, snappedY = false;
+        let snapOffsetX = 0, snapOffsetY = 0;
 
         document.addEventListener('mousedown', e => {
             if (!editMode) return;
             const target = e.target.closest(EDIT_TARGETS);
-            if (!target) return;
+            if (!target || target.id === 'editBanner') return;
             e.preventDefault();
             e.stopPropagation();
 
-            // Select
             if (selectedEl) selectedEl.style.outline = '';
             selectedEl = target;
             selectedEl.style.outline = '2px dashed #e74f00';
 
-            // Start drag
             dragEl = target;
-            if (!dragEl.style.position || dragEl.style.position === 'static') {
-                dragEl.style.position = 'relative';
-            }
+            const pos = window.getComputedStyle(dragEl).position;
+            if (pos === 'static') dragEl.style.position = 'relative';
             dragStartX = e.clientX;
             dragStartY = e.clientY;
-            elStartX = parseFloat(dragEl.style.left) || 0;
-            elStartY = parseFloat(dragEl.style.top) || 0;
+            elStartLeft = parseFloat(dragEl.style.left) || 0;
+            elStartTop = parseFloat(dragEl.style.top) || 0;
             dragEl.style.zIndex = '100';
+            snappedX = false; snappedY = false;
         });
 
         document.addEventListener('mousemove', e => {
             if (!dragEl) return;
-            let dx = e.clientX - dragStartX;
-            let dy = e.clientY - dragStartY;
-            let newLeft = elStartX + dx;
-            let newTop = elStartY + dy;
+            const rawLeft = elStartLeft + (e.clientX - dragStartX);
+            const rawTop = elStartTop + (e.clientY - dragStartY);
 
-            // Snap to center
+            dragEl.style.left = rawLeft + 'px';
+            dragEl.style.top = rawTop + 'px';
+
             const rect = dragEl.getBoundingClientRect();
-            const elCenterX = rect.left + rect.width / 2;
-            const elCenterY = rect.top + rect.height / 2;
-            const vpCenterX = window.innerWidth / 2;
-            const vpCenterY = window.innerHeight / 2;
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            const vpCX = window.innerWidth / 2;
+            const vpCY = window.innerHeight / 2;
+            const diffX = Math.abs(cx - vpCX);
+            const diffY = Math.abs(cy - vpCY);
 
-            // Horizontal center snap
-            if (Math.abs(elCenterX - vpCenterX) < SNAP_THRESHOLD) {
-                newLeft += (vpCenterX - elCenterX);
-                guideV.style.opacity = '1';
-                guideV.style.background = '#e74f00';
+            // X snap
+            if (!snappedX && diffX < SNAP_DIST) {
+                snappedX = true;
+                snapOffsetX = vpCX - cx;
+                dragEl.style.left = (rawLeft + snapOffsetX) + 'px';
+                guideV.style.opacity = '1'; guideV.style.background = '#e74f00';
+            } else if (snappedX) {
+                if (diffX > SNAP_RELEASE) {
+                    snappedX = false; snapOffsetX = 0;
+                    guideV.style.opacity = '0.3'; guideV.style.background = '#ccc';
+                } else {
+                    dragEl.style.left = (rawLeft + snapOffsetX) + 'px';
+                }
             } else {
-                guideV.style.opacity = '0.3';
-                guideV.style.background = '#ccc';
+                guideV.style.opacity = '0.3'; guideV.style.background = '#ccc';
             }
 
-            // Vertical center snap
-            if (Math.abs(elCenterY - vpCenterY) < SNAP_THRESHOLD) {
-                newTop += (vpCenterY - elCenterY);
-                guideH.style.opacity = '1';
-                guideH.style.background = '#e74f00';
+            // Y snap
+            if (!snappedY && diffY < SNAP_DIST) {
+                snappedY = true;
+                snapOffsetY = vpCY - cy;
+                dragEl.style.top = (rawTop + snapOffsetY) + 'px';
+                guideH.style.opacity = '1'; guideH.style.background = '#e74f00';
+            } else if (snappedY) {
+                if (diffY > SNAP_RELEASE) {
+                    snappedY = false; snapOffsetY = 0;
+                    guideH.style.opacity = '0.3'; guideH.style.background = '#ccc';
+                } else {
+                    dragEl.style.top = (rawTop + snapOffsetY) + 'px';
+                }
             } else {
-                guideH.style.opacity = '0.3';
-                guideH.style.background = '#ccc';
+                guideH.style.opacity = '0.3'; guideH.style.background = '#ccc';
             }
-
-            dragEl.style.left = newLeft + 'px';
-            dragEl.style.top = newTop + 'px';
         });
 
         document.addEventListener('mouseup', () => {
             if (dragEl) {
                 dragEl.style.zIndex = '';
                 dragEl = null;
-                guideH.style.opacity = '0.3';
-                guideH.style.background = '#ccc';
-                guideV.style.opacity = '0.3';
-                guideV.style.background = '#ccc';
+                snappedX = false; snappedY = false;
+                guideH.style.opacity = '0.3'; guideH.style.background = '#ccc';
+                guideV.style.opacity = '0.3'; guideV.style.background = '#ccc';
             }
         });
 
