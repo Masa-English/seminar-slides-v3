@@ -1873,12 +1873,22 @@
 
             dragEl = target;
             const pos = window.getComputedStyle(dragEl).position;
-            if (pos === 'static') dragEl.style.position = 'relative';
+            elInitialRect = dragEl.getBoundingClientRect();
+
+            // Convert absolute (bottom/right) to top/left before dragging
+            if (pos === 'absolute' && !dragEl.style.left) {
+                dragEl.style.left = elInitialRect.left + 'px';
+                dragEl.style.top = elInitialRect.top + 'px';
+                dragEl.style.right = 'auto';
+                dragEl.style.bottom = 'auto';
+            } else if (pos === 'static') {
+                dragEl.style.position = 'relative';
+            }
+
             dragStartX = e.clientX;
             dragStartY = e.clientY;
             elStartLeft = parseFloat(dragEl.style.left) || 0;
             elStartTop = parseFloat(dragEl.style.top) || 0;
-            elInitialRect = dragEl.getBoundingClientRect();
             dragEl.style.zIndex = '100';
             snappedX = false; snappedY = false;
             snapCorrectionX = 0; snapCorrectionY = 0;
