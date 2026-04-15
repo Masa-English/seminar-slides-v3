@@ -1844,6 +1844,9 @@
             guideH.style.display = editMode ? 'block' : 'none';
             guideV.style.display = editMode ? 'block' : 'none';
             document.body.style.cursor = editMode ? 'crosshair' : '';
+            document.querySelectorAll('.slide-illust').forEach(el => {
+                el.style.pointerEvents = editMode ? 'auto' : 'none';
+            });
             if (selectedEl) { selectedEl.style.outline = ''; selectedEl = null; }
             if (!editMode) savePositions();
         }
