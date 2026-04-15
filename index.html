@@ -1873,22 +1873,30 @@
 
             dragEl = target;
             const pos = window.getComputedStyle(dragEl).position;
+            const slideEl = dragEl.closest('.slide');
             elInitialRect = dragEl.getBoundingClientRect();
 
-            // Convert absolute (bottom/right) to top/left before dragging
+            // Convert absolute (bottom/right) to slide-relative top/left before dragging
             if (pos === 'absolute' && !dragEl.style.left) {
-                dragEl.style.left = elInitialRect.left + 'px';
-                dragEl.style.top = elInitialRect.top + 'px';
+                const slideRect = slideEl ? slideEl.getBoundingClientRect() : {left:0, top:0};
+                dragEl.style.left = (elInitialRect.left - slideRect.left) + 'px';
+                dragEl.style.top = (elInitialRect.top - slideRect.top) + 'px';
                 dragEl.style.right = 'auto';
                 dragEl.style.bottom = 'auto';
             } else if (pos === 'static') {
                 dragEl.style.position = 'relative';
             }
 
+            // Support both px and % start positions
+            const slideW = slideEl ? slideEl.offsetWidth : window.innerWidth;
+            const slideH = slideEl ? slideEl.offsetHeight : window.innerHeight;
+            const leftVal = dragEl.style.left || '0';
+            const topVal = dragEl.style.top || '0';
+            elStartLeft = leftVal.endsWith('%') ? parseFloat(leftVal) / 100 * slideW : (parseFloat(leftVal) || 0);
+            elStartTop  = topVal.endsWith('%')  ? parseFloat(topVal)  / 100 * slideH : (parseFloat(topVal)  || 0);
+
             dragStartX = e.clientX;
             dragStartY = e.clientY;
-            elStartLeft = parseFloat(dragEl.style.left) || 0;
-            elStartTop = parseFloat(dragEl.style.top) || 0;
             dragEl.style.zIndex = '100';
             snappedX = false; snappedY = false;
             snapCorrectionX = 0; snapCorrectionY = 0;
@@ -1938,6 +1946,14 @@
 
         document.addEventListener('mouseup', () => {
             if (dragEl) {
+                // Convert px → % relative to slide container (resolution-independent)
+                const slideEl = dragEl.closest('.slide');
+                if (slideEl) {
+                    const W = slideEl.offsetWidth;
+                    const H = slideEl.offsetHeight;
+                    if (dragEl.style.left) dragEl.style.left = (parseFloat(dragEl.style.left) / W * 100).toFixed(4) + '%';
+                    if (dragEl.style.top)  dragEl.style.top  = (parseFloat(dragEl.style.top)  / H * 100).toFixed(4) + '%';
+                }
                 dragEl.style.zIndex = '';
                 dragEl = null;
                 snappedX = false; snappedY = false;
