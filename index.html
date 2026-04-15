@@ -1839,7 +1839,7 @@
 
         document.addEventListener('mousedown', e => {
             if (!editMode) return;
-            const target = e.target.closest('.slide-content > *, .slide-illust, .spacer-s, .spacer-m, .spacer-l');
+            const target = e.target.closest('h2, p, img, div.spacer-s, div.spacer-m, div.spacer-l, .slide-illust, .bullet-item, .flow-card, .step-box, .testimonial-solo, .zoom-cta, .example-box, .phase-card-img, .emphasis-band, .pain-item');
             if (!target) return;
             e.preventDefault();
             e.stopPropagation();
