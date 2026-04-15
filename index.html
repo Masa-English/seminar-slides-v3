@@ -2005,20 +2005,24 @@
 
         document.addEventListener('mousemove', e => {
             if (!dragEl) return;
-            const dx = e.clientX - dragStartX;
-            const dy = e.clientY - dragStartY;
+            // viewport delta → canvas delta（スケール除算）
+            const dx = (e.clientX - dragStartX) / canvasScale;
+            const dy = (e.clientY - dragStartY) / canvasScale;
 
-            const rawCX = elInitialRect.left + elInitialRect.width / 2 + dx;
-            const rawCY = elInitialRect.top + elInitialRect.height / 2 + dy;
-            const vpCX = 960;
-            const vpCY = 540;
+            // スナップ判定はviewport座標で（elInitialRectもviewport座標）
+            const dxVP = e.clientX - dragStartX;
+            const dyVP = e.clientY - dragStartY;
+            const rawCX = elInitialRect.left + elInitialRect.width / 2 + dxVP;
+            const rawCY = elInitialRect.top  + elInitialRect.height / 2 + dyVP;
+            const vpCX = window.innerWidth  / 2;
+            const vpCY = window.innerHeight / 2;
             const rawDiffX = Math.abs(rawCX - vpCX);
             const rawDiffY = Math.abs(rawCY - vpCY);
 
-            // X snap: based on RAW mouse-driven position, not snapped position
+            // X snap（viewport座標で判定、canvas座標に変換して補正）
             if (!snappedX && rawDiffX < SNAP_DIST) {
                 snappedX = true;
-                snapCorrectionX = vpCX - rawCX;
+                snapCorrectionX = (vpCX - rawCX) / canvasScale;
                 guideV.style.opacity = '1'; guideV.style.background = '#e74f00';
             } else if (snappedX && rawDiffX > SNAP_RELEASE) {
                 snappedX = false;
@@ -2029,7 +2033,7 @@
             // Y snap
             if (!snappedY && rawDiffY < SNAP_DIST) {
                 snappedY = true;
-                snapCorrectionY = vpCY - rawCY;
+                snapCorrectionY = (vpCY - rawCY) / canvasScale;
                 guideH.style.opacity = '1'; guideH.style.background = '#e74f00';
             } else if (snappedY && rawDiffY > SNAP_RELEASE) {
                 snappedY = false;
@@ -2196,14 +2200,15 @@
         }
         // ===== FIXED CANVAS 1920x1080 =====
         const CANVAS_W = 1920, CANVAS_H = 1080;
+        let canvasScale = 1;
         function fitCanvas() {
-            const scale = Math.min(
+            canvasScale = Math.min(
                 window.innerWidth  / CANVAS_W,
                 window.innerHeight / CANVAS_H
             );
-            const ox = (window.innerWidth  - CANVAS_W * scale) / 2;
-            const oy = (window.innerHeight - CANVAS_H * scale) / 2;
-            document.body.style.transform = `translate(${ox}px,${oy}px) scale(${scale})`;
+            const ox = (window.innerWidth  - CANVAS_W * canvasScale) / 2;
+            const oy = (window.innerHeight - CANVAS_H * canvasScale) / 2;
+            document.body.style.transform = `translate(${ox}px,${oy}px) scale(${canvasScale})`;
         }
         window.addEventListener('resize', fitCanvas);
         fitCanvas();
