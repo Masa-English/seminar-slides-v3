@@ -1826,7 +1826,7 @@
 
         // Banner
         const editBanner = document.createElement('div');
-        editBanner.innerHTML = '✏️ 編集モード — ドラッグ:移動 / ホイール:拡大縮小 / Eキー:終了';
+        editBanner.innerHTML = '✏️ 編集モード — ドラッグ:移動 / ホイール:拡大縮小 / Shift+E:終了';
         editBanner.style.cssText = 'display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#e74f00;color:#fff;text-align:center;padding:8px;font-size:14px;font-weight:700;';
         document.body.appendChild(editBanner);
 
@@ -1995,8 +1995,8 @@
         loadPositions();
 
         document.addEventListener('keydown', e => {
-            if (e.key === 'e' || e.key === 'E') {
-                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'E' && e.shiftKey) {
+                e.preventDefault();
                 toggleEditMode();
             }
             // Delete position reset
