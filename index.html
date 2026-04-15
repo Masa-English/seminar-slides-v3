@@ -1985,9 +1985,14 @@
                 dragEl.style.position = 'relative';
             }
 
-            // Canvas is 1920×1080 fixed — coordinates are always in canvas px
-            elStartLeft = parseFloat(dragEl.style.left) || 0;
-            elStartTop  = parseFloat(dragEl.style.top)  || 0;
+            // %で保存されてる場合はpxに戻してからdrag計算
+            const slideEl2 = dragEl.closest('.slide');
+            const slideW = slideEl2 ? slideEl2.offsetWidth : window.innerWidth;
+            const slideH = slideEl2 ? slideEl2.offsetHeight : window.innerHeight;
+            const leftVal = dragEl.style.left || '0';
+            const topVal  = dragEl.style.top  || '0';
+            elStartLeft = leftVal.endsWith('%') ? parseFloat(leftVal) / 100 * slideW : (parseFloat(leftVal) || 0);
+            elStartTop  = topVal.endsWith('%')  ? parseFloat(topVal)  / 100 * slideH : (parseFloat(topVal)  || 0);
 
             dragStartX = e.clientX;
             dragStartY = e.clientY;
@@ -2039,7 +2044,14 @@
 
         document.addEventListener('mouseup', () => {
             if (dragEl) {
-                // Canvas is fixed 1920×1080 — store px directly, no conversion needed
+                // px → % (スライドコンテナ比) に変換して保存。どの画面でも同じ位置になる
+                const slideEl = dragEl.closest('.slide');
+                if (slideEl) {
+                    const W = slideEl.offsetWidth;
+                    const H = slideEl.offsetHeight;
+                    if (dragEl.style.left) dragEl.style.left = (parseFloat(dragEl.style.left) / W * 100).toFixed(4) + '%';
+                    if (dragEl.style.top)  dragEl.style.top  = (parseFloat(dragEl.style.top)  / H * 100).toFixed(4) + '%';
+                }
                 dragEl.style.zIndex = '';
                 dragEl = null;
                 snappedX = false; snappedY = false;
